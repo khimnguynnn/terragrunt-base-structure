@@ -1,0 +1,1 @@
+# This file is intentionally empty - backend config is inherited from parent
