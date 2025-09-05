@@ -1,58 +1,58 @@
 # Terragrunt Infrastructure as Code
 
-This is a Terragrunt structure designed to manage AWS infrastructure in an organized and scalable way.
+Đây là một cấu trúc Terragrunt được thiết kế để quản lý infrastructure trên AWS một cách có tổ chức và có thể mở rộng.
 
-## 📁 Directory Structure
+## 📁 Cấu trúc thư mục
 
 ```
 labs01/
-├── _env/                          # Terraform modules (reusable components)
-│   ├── VPC/                       # VPC module
+├── _env/                          # Terraform modules (các thành phần có thể tái sử dụng)
+│   ├── VPC/                       # Module VPC
 │   │   ├── main.tf
 │   │   ├── variables.tf
 │   │   └── outputs.tf
-│   ├── SG/                        # Security Group module
+│   ├── SG/                        # Module Security Group
 │   │   ├── main.tf
 │   │   ├── variables.tf
 │   │   └── outputs.tf
-│   └── EC2/                       # EC2 module
+│   └── EC2/                       # Module EC2
 │       ├── main.tf
 │       └── variables.tf
-├── live/                          # Environment-specific configurations
-│   ├── develop/                   # Development environment
+├── live/                          # Cấu hình theo từng môi trường
+│   ├── develop/                   # Môi trường phát triển
 │   │   └── VPC/
 │   │       └── terragrunt.hcl
-│   ├── staging/                   # Staging environment
+│   ├── staging/                   # Môi trường staging
 │   │   └── terragrunt.hcl
-│   └── production/                # Production environment
+│   └── production/                # Môi trường production
 │       └── terragrunt.hcl
-├── terragrunt.hcl                 # Root configuration (backend, common settings)
+├── terragrunt.hcl                 # Cấu hình gốc (backend, các thiết lập chung)
 └── README.md
 ```
 
-## 🏗️ Architecture
+## 🏗️ Kiến trúc
 
 ### 1. **Modules (_env/)**
-- Contains reusable Terraform modules
-- Each module has `main.tf`, `variables.tf`, and `outputs.tf`
-- Designed to be independent and reusable across multiple environments
+- Chứa các Terraform modules có thể tái sử dụng
+- Mỗi module có `main.tf`, `variables.tf`, và `outputs.tf`
+- Được thiết kế để độc lập và có thể sử dụng cho nhiều môi trường
 
 ### 2. **Environments (live/)**
-- `develop/`: Development environment
-- `staging/`: Staging environment
-- `production/`: Production environment
-- Each environment can have different modules based on requirements
+- `develop/`: Môi trường phát triển
+- `staging/`: Môi trường staging
+- `production/`: Môi trường production
+- Mỗi môi trường có thể có các modules khác nhau tùy theo nhu cầu
 
-### 3. **Backend Configuration**
-- Uses AWS S3 to store state files
-- DynamoDB table for state locking
-- Automatically generates `backend.tf` for each module
+### 3. **Cấu hình Backend**
+- Sử dụng AWS S3 để lưu trữ state files
+- DynamoDB table để quản lý state locking
+- Tự động tạo `backend.tf` cho mỗi module
 
-## 🚀 Usage
+## 🚀 Cách sử dụng
 
-### Prerequisites
+### Yêu cầu hệ thống
 
-1. **Install Terraform**
+1. **Cài đặt Terraform**
    ```bash
    # Windows (PowerShell)
    choco install terraform
@@ -64,7 +64,7 @@ labs01/
    sudo apt-get update && sudo apt-get install terraform
    ```
 
-2. **Install Terragrunt**
+2. **Cài đặt Terragrunt**
    ```bash
    # Windows (PowerShell)
    choco install terragrunt
@@ -78,17 +78,17 @@ labs01/
    sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
    ```
 
-3. **Configure AWS CLI**
+3. **Cấu hình AWS CLI**
    ```bash
    aws configure
    ```
 
-4. **Create S3 Bucket and DynamoDB Table**
+4. **Tạo S3 Bucket và DynamoDB Table**
    ```bash
-   # Create S3 bucket
+   # Tạo S3 bucket
    aws s3 mb s3://terraform-backend-bucket-khiemnd --region ap-southeast-1
    
-   # Create DynamoDB table
+   # Tạo DynamoDB table
    aws dynamodb create-table \
      --table-name st-point-terraform-lock-table \
      --attribute-definitions AttributeName=LockID,AttributeType=S \
@@ -97,63 +97,63 @@ labs01/
      --region ap-southeast-1
    ```
 
-### Basic Commands
+### Các lệnh cơ bản
 
-#### 1. **Plan (preview changes)**
+#### 1. **Plan (xem trước thay đổi)**
 ```bash
-# Plan for VPC module in develop environment
+# Plan cho VPC module trong môi trường develop
 tfg plan --terragrunt-working-dir .\live\develop\VPC
 
-# Plan for all modules in develop environment
+# Plan cho tất cả modules trong môi trường develop
 tfg run-all plan --terragrunt-working-dir .\live\develop
 ```
 
-#### 2. **Apply (deploy infrastructure)**
+#### 2. **Apply (triển khai infrastructure)**
 ```bash
 # Apply VPC module
 tfg apply --terragrunt-working-dir .\live\develop\VPC
 
-# Apply with auto-approve
+# Apply với auto-approve
 tfg apply --terragrunt-working-dir .\live\develop\VPC --auto-approve
 
-# Apply all modules
+# Apply tất cả modules
 tfg run-all apply --terragrunt-working-dir .\live\develop
 ```
 
-#### 3. **Destroy (remove infrastructure)**
+#### 3. **Destroy (xóa infrastructure)**
 ```bash
 # Destroy VPC module
 tfg destroy --terragrunt-working-dir .\live\develop\VPC
 
-# Destroy all modules
+# Destroy tất cả modules
 tfg run-all destroy --terragrunt-working-dir .\live\develop
 ```
 
-#### 4. **Output (view outputs)**
+#### 4. **Output (xem outputs)**
 ```bash
-# View outputs of VPC module
+# Xem outputs của VPC module
 tfg output --terragrunt-working-dir .\live\develop\VPC
 ```
 
-## 📋 Real-world Workflow
+## 📋 Quy trình làm việc thực tế
 
-### 1. **Create new module**
+### 1. **Tạo module mới**
 ```bash
-# Create module directory
+# Tạo thư mục module
 mkdir _env\NewModule
 
-# Create necessary files
+# Tạo các file cần thiết
 touch _env\NewModule\main.tf
 touch _env\NewModule\variables.tf
 touch _env\NewModule\outputs.tf
 ```
 
-### 2. **Use module in environment**
+### 2. **Sử dụng module trong môi trường**
 ```bash
-# Create directory for module in environment
+# Tạo thư mục cho module trong môi trường
 mkdir live\develop\NewModule
 
-# Create terragrunt.hcl
+# Tạo terragrunt.hcl
 cat > live\develop\NewModule\terragrunt.hcl << EOF
 include "backend" {
   path = find_in_parent_folders()
@@ -164,14 +164,14 @@ terraform {
 }
 
 inputs = {
-  # Configure inputs for module
+  # Cấu hình inputs cho module
 }
 EOF
 ```
 
-### 3. **Add dependencies between modules**
+### 3. **Thêm dependency giữa các modules**
 ```hcl
-# In terragrunt.hcl of dependent module
+# Trong terragrunt.hcl của module phụ thuộc
 dependency "vpc" {
   config_path = "../VPC"
 }
@@ -182,9 +182,9 @@ inputs = {
 }
 ```
 
-## 🔧 Backend Configuration
+## 🔧 Cấu hình Backend
 
-### S3 Backend Configuration
+### Cấu hình S3 Backend
 ```hcl
 remote_state {
   backend = "s3"
@@ -202,7 +202,7 @@ remote_state {
 }
 ```
 
-### State File Structure
+### Cấu trúc State File
 ```
 terraform-backend-bucket-khiemnd/
 ├── live/develop/VPC/terraform.tfstate
@@ -212,72 +212,72 @@ terraform-backend-bucket-khiemnd/
 └── live/production/VPC/terraform.tfstate
 ```
 
-## 🛡️ Best Practices
+## 🛡️ Thực hành tốt nhất
 
-### 1. **Naming Convention**
-- Modules: PascalCase (e.g., `VPC`, `SecurityGroup`)
-- Environments: lowercase (e.g., `develop`, `staging`, `production`)
-- Resources: kebab-case with prefix (e.g., `khiemnd-develop-vpc`)
+### 1. **Quy ước đặt tên**
+- Modules: PascalCase (VD: `VPC`, `SecurityGroup`)
+- Environments: lowercase (VD: `develop`, `staging`, `production`)
+- Resources: kebab-case với prefix (VD: `khiemnd-develop-vpc`)
 
-### 2. **State Management**
-- Always use remote state (S3)
-- Never commit state files to Git
-- Use DynamoDB for state locking
+### 2. **Quản lý State**
+- Luôn sử dụng remote state (S3)
+- Không commit state files vào Git
+- Sử dụng DynamoDB để lock state
 
-### 3. **Security**
-- Use IAM roles instead of access keys when possible
-- Enable encryption for S3 bucket
-- Use least privilege principle
+### 3. **Bảo mật**
+- Sử dụng IAM roles thay vì access keys khi có thể
+- Bật encryption cho S3 bucket
+- Sử dụng nguyên tắc least privilege
 
 ### 4. **Dependencies**
-- Define clear dependencies between modules
-- Apply modules in dependency order (VPC → SG → EC2)
+- Định nghĩa dependencies rõ ràng giữa các modules
+- Apply modules theo thứ tự dependency (VPC → SG → EC2)
 
-## 🐛 Troubleshooting
+## 🐛 Khắc phục sự cố
 
-### 1. **State not saved to S3**
+### 1. **State không được lưu trên S3**
 ```bash
-# Check backend configuration
+# Kiểm tra cấu hình backend
 tfg init --terragrunt-working-dir .\live\develop\VPC
 
-# Migrate state from local to S3
+# Migrate state từ local sang S3
 tfg init --terragrunt-working-dir .\live\develop\VPC -migrate-state
 ```
 
-### 2. **Dependency errors**
+### 2. **Lỗi dependency**
 ```bash
-# Apply dependencies first
+# Apply dependencies trước
 tfg apply --terragrunt-working-dir .\live\develop\VPC
 tfg apply --terragrunt-working-dir .\live\develop\SG
 
-# Then apply dependent module
+# Sau đó apply module phụ thuộc
 tfg apply --terragrunt-working-dir .\live\develop\EC2
 ```
 
-### 3. **Clear cache**
+### 3. **Xóa cache**
 ```bash
-# Clear Terragrunt cache
+# Xóa Terragrunt cache
 Remove-Item -Recurse -Force .\live\develop\VPC\.terragrunt-cache
 ```
 
-## 📚 References
+## 📚 Tài liệu tham khảo
 
 - [Terragrunt Documentation](https://terragrunt.gruntwork.io/)
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest)
 - [Terraform AWS Modules](https://registry.terraform.io/namespaces/terraform-aws-modules)
 
-## 👥 Contributing
+## 👥 Đóng góp
 
 1. Fork repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
+2. Tạo feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit changes (`git commit -m 'Add amazing feature'`)
 4. Push to branch (`git push origin feature/amazing-feature`)
-5. Create Pull Request
+5. Tạo Pull Request
 
-## 📄 License
+## 📄 Giấy phép
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-**Note**: Change the S3 bucket name and DynamoDB table name in `terragrunt.hcl` to match your project.
+**Lưu ý**: Thay đổi tên S3 bucket và DynamoDB table trong `terragrunt.hcl` để phù hợp với project của bạn.
